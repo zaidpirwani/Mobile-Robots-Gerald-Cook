@@ -1,15 +1,25 @@
 clc; clear all; clear global; clear variables; close all;
 color = 'kbgrcmy'; colorVal = 1;
 figure; hold on;
-subplot(2,2,1); grid on; title('Robot Trajectory');
-axis([-25 25 -15 15]);
 
 TIMESTEP = 0.1;
 TOTALTIME = 50;
-DRAWCOUNT = 100;
+DRAWCOUNT = 1;
+t = TIMESTEP:TIMESTEP:TOTALTIME;
+
+subplot(2,2,1); grid on; title('Robot Trajectory'); axis([-25 25 -15 15]);
+robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+
+subplot(2,2,2); title('Heading vs t');    grid on; axis([0 TOTALTIME -pi pi]); 
+Heading   = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+
+subplot(2,2,3); title('X Position vs t'); grid on; axis([0 TOTALTIME -20 20]);
+xPosition = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+
+subplot(2,2,4); title('Y Position vs t'); grid on; axis([0 TOTALTIME -20 20]);
+yPosition = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
 
 robot = [([0, 0])];
-robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
 x   = zeros(TOTALTIME/TIMESTEP,1);
 y   = zeros(TOTALTIME/TIMESTEP,1);
 psi = zeros(TOTALTIME/TIMESTEP,1);
@@ -54,21 +64,20 @@ while zed<((TOTALTIME/TIMESTEP)-1)
     y(zed+1,1) = y(zed,1) + TIMESTEP * ((vRight(zed,1) + vLeft(zed,1)) /2) * cos(psi(zed,1));
 
     psi(zed+1,1) = psi(zed,1) + TIMESTEP * ((vRight(zed,1) - vLeft(zed,1))/W);
+    psi(zed+1,1) = atan2(sin(psi(zed+1,1)), cos(psi(zed+1,1)));
     
     vRight(zed+1,1) = vRight(zed,1) + TIMESTEP*u1(zed,1);
     vLeft(zed+1,1)  = vLeft(zed,1)  + TIMESTEP*u2(zed,1);
     
     addpoints(robotTrajectory,x(zed,1),y(zed,1));
+    addpoints(Heading,zed*TIMESTEP,psi(zed,1));
+    addpoints(xPosition,zed*TIMESTEP,x(zed,1));
+    addpoints(yPosition,zed*TIMESTEP,y(zed,1));
     
     if(mod(zed,round((TOTALTIME/TIMESTEP)/DRAWCOUNT)) == 0)
         drawnow
     end
 end
-
-t = TIMESTEP:TIMESTEP:TOTALTIME;
-subplot(2,2,2); plot(t,psi); title('Heading vs t');    grid on; 
-subplot(2,2,3); plot(t,x);   title('X Position vs t'); grid on;
-subplot(2,2,4); plot(t,y);   title('Y Position vs t'); grid on;
 
 
 % numberOfRobots = 4;

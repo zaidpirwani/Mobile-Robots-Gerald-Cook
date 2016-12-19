@@ -1,14 +1,23 @@
 clc; clear all; clear global; clear variables; close all;
 color = 'kbgrcmy'; colorVal = 1;
-figure; hold on; grid on;
-axis([0 25 0 25]); axis square;
+figure; hold on;
 
 TIMESTEP = 0.1;
-TOTALTIME = 10;
-DRAWCOUNT = 10;
+TOTALTIME = 50;
+DRAWCOUNT = 100;
+t = TIMESTEP:TIMESTEP:TOTALTIME;
 
-robot = [([10, 10])];
+subplot(2,2,1); grid on; title('Robot Trajectory'); axis([-25 25 -15 15]);
+subplot(2,2,2); title('Heading vs t');    grid on; 
+subplot(2,2,3); title('X Position vs t'); grid on;
+subplot(2,2,4); title('Y Position vs t'); grid on;
+
 robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
+
+
+robot = [([0, 0])];
 x   = zeros(TOTALTIME/TIMESTEP,1);
 y   = zeros(TOTALTIME/TIMESTEP,1);
 psi = zeros(TOTALTIME/TIMESTEP,1);
@@ -58,27 +67,18 @@ while zed<((TOTALTIME/TIMESTEP)-1)
     vLeft(zed+1,1)  = vLeft(zed,1)  + TIMESTEP*u2(zed,1);
     
     addpoints(robotTrajectory,x(zed,1),y(zed,1));
+    addpoints(robotTrajectory,x(zed,1),y(zed,1));
+    addpoints(robotTrajectory,x(zed,1),y(zed,1));
+    addpoints(robotTrajectory,x(zed,1),y(zed,1));
     
     if(mod(zed,round((TOTALTIME/TIMESTEP)/DRAWCOUNT)) == 0)
         drawnow
     end
 end
-pause
-
-t = TIMESTEP:TIMESTEP:TOTALTIME;
-figure;
-subplot(3,1,1);plot(t,x)
-plot(t,y)
-plot(t,psi)
-
-
-
 % numberOfRobots = 4;
-
 % circle(robot(i,1),robot(i,2),0.2,2);
 % rectangle('Position',[obstacle(1,1)-v1 obstacle(1,2)-v2 v1*2 v2*2]);
 % ellipse(obstacle(1,1),obstacle(1,2),1/A,1/B);
 % border(robot(1:numberOfRobots,1),robot(1:numberOfRobots,2));
-
 % robotTrajectory = animatedline('Color',color(colorVal),'LineWidth',1);colorVal=colorVal+1;
 % addpoints(robotTrajectory,X,Y);
